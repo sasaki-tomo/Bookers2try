@@ -1,0 +1,79 @@
+<div class="body">
+  <div class="container">
+
+    <!--サクセスメッセージ-->
+    <p id="notice">
+      <%= notice %>
+    </p>
+
+    <!--コメントエラーメッセージ-->
+    <div class="error">
+      <% if @comment.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@comment.errors.count, "error") %> prohibited this product from being saved:</h2>
+          <ul>
+            <% @comment.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+
+    <!--サイドバー-->
+    <div class="row">
+      <div class="col-xs-3">
+        <%= render 'users/userinfo', user: @user %> <!--User infoの部分テンプレート-->
+        <%= render 'books/newbook', book: @book_new %> <!--New bookの部分テンプレート-->
+      </div>
+
+      <!--投稿詳細-->
+      <div class="col-xs-9">
+
+        <h2>Book detail</h2>
+        <table class="table table-hover table-inverse">
+          <tbody>
+            <tr>
+              <td>
+              <%= link_to user_path(@user) do %>
+                <%= attachment_image_tag @book.user, :profile_image, :fill, 40, 40, format: 'jpeg', fallback: "no_image.jpg", size: '40x40' %><br>
+                <%= @user.name %>
+              <% end %>
+
+              </td>
+              <td><%= @book.title %></td>
+              <td><%= @book.body %></td>
+
+              <!--いいね機能-->
+              <td>
+                <div id="book_<%= @book.id %>">
+                  <%= render 'favorites/favorite', book: @book %>
+                </div>
+              </td>
+
+              <td>コメント数：<%= @book.book_comments.count %></td>
+              <% if user_signed_in? && current_user.id == @book.user_id %>
+                <td><%= link_to "Edit", edit_book_path(@book.id), class: "btn btn-success btn-sm" %></td>
+                <td><%= link_to "Destroy", book_path(@book), method: :delete, data: {confirm: "本当に消しますか？"}, class: "btn btn-danger btn-sm" %></td>
+              <% end %>
+            </tr>
+          </tbody>
+         </table>
+
+          <!--コメント表示-->
+         <table>
+          <tbody id="comment_area">
+            <%= render 'book_comments/comment_index', book: @book %>
+          </tbody>
+         </table>
+
+            <!--コメント入力フォーム-->
+              <div  id="comment_form">
+                  <%= render "book_comments/comment_form", book: @book, comment: @comment %>
+              </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
